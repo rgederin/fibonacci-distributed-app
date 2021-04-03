@@ -14,12 +14,12 @@ class Fib extends Component {
   }
 
   async fetchValues() {
-    const values = await axios.get('/api/fib/indexes');
+    const values = await axios.get('/api/fib/values');
     this.setState({ values: values.data });
   }
 
   async fetchIndexes() {
-    const seenIndexes = await axios.get('/api/fib/values');
+    const seenIndexes = await axios.get('/api/fib/indexes');
     this.setState({
       seenIndexes: seenIndexes.data,
     });
