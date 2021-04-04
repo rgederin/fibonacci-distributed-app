@@ -17,6 +17,7 @@ const fib = index => {
     return fib(index - 1) + fib(index - 2);
 };
 
+console.log("fib worker up and running");
 subscription.on('message', (channel, message) => {
     redisClient.hset('values', message, fib(parseInt(message)));
 });
