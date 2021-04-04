@@ -8,7 +8,17 @@ services:
   redis:
     image: "redis:latest"
 
-  server:
+  nginx:
+    restart: always
+    build:
+      dockerfile: Dockerfile.dev 
+      context: ./nginx
+    ports:
+      - "3050:80"
+    depends_on:
+      - api
+      - client
+  api:
     build:
       dockerfile: Dockerfile.dev
       context: ./server
