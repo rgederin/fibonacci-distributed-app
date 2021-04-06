@@ -9,7 +9,17 @@ script:
   - docker run -e CI=true rgederin/fib-client-test npm test -- --coverage
 
 after_success:
-  - docker build -t rgederin/fib-client -f ./client
-  - docker build -t rgederin/fib-server -f ./server
-  - docker build -t rgederin/fib-worker -f ./worker
-  - docker build -t rgederin/fib-nginx -f ./nginx
+  # Build production docker images
+  - docker build -t rgederin/fib-client ./client
+  - docker build -t rgederin/fib-server ./server
+  - docker build -t rgederin/fib-worker ./worker
+  - docker build -t rgederin/fib-nginx ./nginx
+
+  # Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+
+  # Push images to Docker hub
+  - docker push rgederin/fib-client
+  - docker push rgederin/fib-server
+  - docker push rgederin/fib-worker
+  - docker push rgederin/fib-nginx
