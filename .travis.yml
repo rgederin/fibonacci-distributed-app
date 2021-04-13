@@ -23,3 +23,16 @@ after_success:
   - docker push rgederin/fib-server
   - docker push rgederin/fib-worker
   - docker push rgederin/fib-nginx
+  # fib_application_db
+
+deploy:
+  provider: elasticbeanstalk
+  region: "us-east-2"
+  app: "fib-application-app"
+  env: "Fibapplicationeb-env"
+  bucket_name: "elasticbeanstalk-us-east-2-530260462866"
+  bucket_path: "fib-app"
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: $AWS_SECRET_KEY
