@@ -194,4 +194,59 @@ And to verify that all containers are up and running you could execute `docker p
 
 ![docker-ps](https://github.com/rgederin/fibonacci-distributed-app/blob/master/img/docker-ps.png)
 
+## Continuous Integration Workflow for Multiple Images with Travis CI
+
+We will use Travis CI for organizing CI process and Docker Hub for storing docker images for our services. Below you could see whole CI/CD flow (deployment to AWS Elastic Beanstalk we will review in next section):
+
+![flow](https://github.com/rgederin/fibonacci-distributed-app/blob/master/img/flow.png)
+
+First of all we will add `production` Docker files for each of our services. In our case there will be little to no differences between dev and prod docker files, but however lets follow this approach.
+
+Production Dockerfiles for `worker` and `server` services are the same and differ from dev ones only with starting command:
+
+```
+FROM node:14.14.0-alpine
+WORKDIR "/app"
+COPY ./package.json ./
+RUN npm install
+COPY . .
+CMD ["npm", "run", "start"]
+```
+
+For client service we need to add one more nginx instance in order to serving static React content. 
+
+![flow](https://github.com/rgederin/fibonacci-distributed-app/blob/master/img/nginx-prod.png)
+
+Also we need to add corresponding `default.conf` to [client nginx](https://github.com/rgederin/fibonacci-distributed-app/blob/master/client/nginx/default.conf):
+
+```
+server {
+  listen 3000;
+ 
+  location / {
+    root /usr/share/nginx/html;
+    index index.html index.htm;
+    try_files $uri $uri/ /index.html;
+  }
+}
+```
+After this our production [Dockerfile](https://github.com/rgederin/fibonacci-distributed-app/blob/master/client/Dockerfile) will looks like:
+
+```
+FROM node:alpine as builder
+WORKDIR '/app'
+COPY ./package.json ./
+RUN npm install
+COPY . .
+RUN npm run build
+
+FROM nginx
+EXPOSE 3000
+COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
+COPY  --from=builder /app/build /usr/share/nginx/html
+```
+
+
+
+
 
