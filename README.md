@@ -76,4 +76,50 @@ CMD ["npm", "run", "dev"]
 
 **Dockerize nginx**
 
-First of all, below you could find 
+First of all, below you could find diagram which is cleary described Nginx role in our development environment. We are using it as proxy for routing requests to the client and server.
+
+![nginx-role](https://github.com/rgederin/fibonacci-distributed-app/blob/master/img/nginx-role.png)
+
+In order to configure nginx for our needs we will use `default.conf` file where we will add configuration rules to the Nginx:
+
+![default-conf](https://github.com/rgederin/fibonacci-distributed-app/blob/master/img/default-conf.png)
+
+To be more precise, below you could find [default.conf](https://github.com/rgederin/fibonacci-distributed-app/blob/master/nginx/default.conf) content:
+
+```
+upstream client {
+  server client:3000;
+}
+
+upstream api {
+  server api:5000;
+}
+
+server {
+  listen 80;
+
+  location / {
+    proxy_pass http://client;
+  }
+
+  location /api {
+    rewrite /api/(.*) /$1 break;
+    proxy_pass http://api;
+  }
+
+  location /sockjs-node {
+    proxy_pass http://client;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "Upgrade";
+  }
+}
+```
+After this we need to dockerize nginx using base image and put there our configuretion. As previously we will do this using [Dockerfile.dev](https://github.com/rgederin/fibonacci-distributed-app/blob/master/nginx/Dockerfile.dev):
+
+```
+FROM nginx
+COPY ./default.conf /etc/nginx/conf.d/default.conf
+```
+
+
