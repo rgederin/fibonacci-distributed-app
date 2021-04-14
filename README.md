@@ -31,7 +31,7 @@ Overal application workflow is described below:
 ![workflow](https://github.com/rgederin/fibonacci-distributed-app/blob/master/img/workflow.png)
 
 
-## Development environment 
+## Development environment architecture
 
 Development and production environment will slightly differ. Development environment will consist of next components (each of them will run in own Docker container):
 
@@ -44,3 +44,30 @@ Development and production environment will slightly differ. Development environ
 * Postgres - relational database which stores a permanent list of indices that have bee receives
 * [Worker](https://github.com/rgederin/fibonacci-distributed-app/blob/master/worker) - watches Redis for new indices. Pulls each new index, calculates new Fibonacci value, puts it back into Redis. 
 
+## Running multi-container application locally
+
+Each of mentioned components will run in separate Docker container. We will use [docker compose](https://docs.docker.com/compose/) as an orchestration tool for running multiple Docker containers locally. 
+
+Lets firstly dockerize our React and Node JS applications for running locally. We will use `Dockerfile.dev` for local configuration. For React app we will use `react-scripts start` as command for launching react server with our UI and `nodemon` for launching Node apps. Both ways provide for us live changes so we will be able to see our changes which we will make while coding immediately.
+
+[Dockerfile.dev](https://github.com/rgederin/fibonacci-distributed-app/blob/master/client/Dockerfile.dev) for client application:
+
+```
+FROM node:alpine
+WORKDIR "/app"
+COPY ./package.json ./
+RUN npm install
+COPY . .
+CMD ["npm", "run", "start"]
+```
+
+[Dockerfile.dev](https://github.com/rgederin/fibonacci-distributed-app/blob/master/server/Dockerfile.dev) for server and worker applications:
+
+```
+FROM node:14.14.0-alpine
+WORKDIR "/app"
+COPY ./package.json ./
+RUN npm install
+COPY . .
+CMD ["npm", "run", "dev"]
+```
