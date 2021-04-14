@@ -48,6 +48,8 @@ Development and production environment will slightly differ. Development environ
 
 Each of mentioned components will run in separate Docker container. We will use [docker compose](https://docs.docker.com/compose/) as an orchestration tool for running multiple Docker containers locally. 
 
+**Dockerize client and server components**
+
 Lets firstly dockerize our React and Node JS applications for running locally. We will use `Dockerfile.dev` for local configuration. For React app we will use `react-scripts start` as command for launching react server with our UI and `nodemon` for launching Node apps. Both ways provide for us live changes so we will be able to see our changes which we will make while coding immediately.
 
 [Dockerfile.dev](https://github.com/rgederin/fibonacci-distributed-app/blob/master/client/Dockerfile.dev) for client application:
@@ -71,3 +73,7 @@ RUN npm install
 COPY . .
 CMD ["npm", "run", "dev"]
 ```
+
+**Dockerize nginx**
+
+First of all, below you could find 
