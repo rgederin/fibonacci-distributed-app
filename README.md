@@ -19,6 +19,25 @@ Frontend + backend application which provides user interface and cumputation log
 
 ![app](https://github.com/rgederin/fibonacci-distributed-app/blob/master/img/app.png)
 
-## Development environment infrastructure 
+Data which will be displayed in `Indecies I have seen` and in `Calculated falues` will come from Postgres and Redis respectively:
+
+![app-with-be](https://github.com/rgederin/fibonacci-distributed-app/blob/master/img/app-with-be.png)
 
 
+## Application workflow
+
+Overal application workflow is described below:
+
+![workflow](https://github.com/rgederin/fibonacci-distributed-app/blob/master/img/workflow.png)
+
+
+## Development environment architecture 
+
+Development and production environment will slightly differ. Development environment will consist of next components (running with docker):
+
+* Nginx
+* React server
+* Express Server
+* Worker
+* Redis 
+* Postgres
