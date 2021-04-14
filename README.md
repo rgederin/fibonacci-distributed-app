@@ -48,7 +48,7 @@ Development and production environment will slightly differ. Development environ
 
 Each of mentioned components will run in separate Docker container. We will use [docker compose](https://docs.docker.com/compose/) as an orchestration tool for running multiple Docker containers locally. 
 
-**Dockerize client and server components**
+### Dockerize client and server components
 
 Lets firstly dockerize our React and Node JS applications for running locally. We will use `Dockerfile.dev` for local configuration. For React app we will use `react-scripts start` as command for launching react server with our UI and `nodemon` for launching Node apps. Both ways provide for us live changes so we will be able to see our changes which we will make while coding immediately.
 
@@ -74,7 +74,7 @@ COPY . .
 CMD ["npm", "run", "dev"]
 ```
 
-**Dockerize nginx**
+### Dockerize nginx
 
 First of all, below you could find diagram which is cleary described Nginx role in our development environment. We are using it as proxy for routing requests to the client and server.
 
@@ -115,11 +115,83 @@ server {
   }
 }
 ```
+
 After this we need to dockerize nginx using base image and put there our configuretion. As previously we will do this using [Dockerfile.dev](https://github.com/rgederin/fibonacci-distributed-app/blob/master/nginx/Dockerfile.dev):
 
 ```
 FROM nginx
 COPY ./default.conf /etc/nginx/conf.d/default.conf
 ```
+
+### Using docker compose for running multi container application
+
+First of all we need to create docker-compose.yml and specify there all needful information which are needful for running containers.
+
+```
+version: "3"
+services:
+  postgres:
+    image: "postgres:latest"
+    environment:
+      POSTGRES_PASSWORD: postgres
+
+  redis:
+    image: "redis:latest"
+
+  nginx:
+    restart: always
+    build:
+      dockerfile: Dockerfile.dev 
+      context: ./nginx
+    ports:
+      - "3050:80"
+    depends_on:
+      - api
+      - client
+      
+  api:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./server
+    volumes:
+      - /app/node_modules
+      - ./server:/app
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      PGUSER: postgres
+      PGHOST: postgres
+      PGDATABASE: postgres
+      PGPASSWORD: postgres
+      PGPORT: 5432
+
+  worker:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./worker
+    volumes:
+      - /app/node_modules
+      - ./worker:/app
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+
+  client:
+    stdin_open: true
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./client
+    volumes:
+      - /app/node_modules
+      - ./client:/app
+```
+
+In order to start our application you should execute `docker compose up` and when all containers will be up and running, check http://localhost:3050/ page. You should see something like:
+
+![running-app-local](https://github.com/rgederin/fibonacci-distributed-app/blob/master/img/running-app-local.png)
+
+And to verify that all containers are up and running you could execute `docker ps`:
+
+![docker-ps](https://github.com/rgederin/fibonacci-distributed-app/blob/master/img/docker-ps.png)
 
 

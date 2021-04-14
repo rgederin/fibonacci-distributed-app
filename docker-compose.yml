@@ -18,6 +18,7 @@ services:
     depends_on:
       - api
       - client
+      
   api:
     build:
       dockerfile: Dockerfile.dev
