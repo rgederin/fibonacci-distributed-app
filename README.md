@@ -200,6 +200,8 @@ We will use Travis CI for organizing CI process and Docker Hub for storing docke
 
 ![flow](https://github.com/rgederin/fibonacci-distributed-app/blob/master/img/flow.png)
 
+### Production docker files
+
 First of all we will add `production` Docker files for each of our services. In our case there will be little to no differences between dev and prod docker files, but however lets follow this approach.
 
 Production Dockerfiles for `worker` and `server` services are the same and differ from dev ones only with starting command:
@@ -246,7 +248,44 @@ COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
 COPY  --from=builder /app/build /usr/share/nginx/html
 ```
 
+### Setting up Travis CI
 
+First thing which we need to do is to integrate our repository with Travis CI - this is quite straight forward (https://docs.travis-ci.com/user/tutorial/#to-get-started-with-travis-ci-using-github).
+
+Also we need to specify in Travis CI `DOCKER_ID` and `DOCKER_PASSWORD` credentials in order to push images to Docker Hub:
+
+![travis](https://github.com/rgederin/fibonacci-distributed-app/blob/master/img/travis.png)
+
+After this lets add `.travis.yml` in the root of our repository:
+
+```
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t rgederin/fib-client-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true rgederin/fib-client-test npm test -- --coverage
+after_success:
+  # Build production docker images
+  - docker build -t rgederin/fib-client ./client
+  - docker build -t rgederin/fib-server ./server
+  - docker build -t rgederin/fib-worker ./worker
+  - docker build -t rgederin/fib-nginx ./nginx
+
+  # Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+
+  # Push images to Docker hub
+  - docker push rgederin/fib-client
+  - docker push rgederin/fib-server
+  - docker push rgederin/fib-worker
+  - docker push rgederin/fib-nginx
+```
+
+After this push your changes in github and check build in Travis CI:
 
 
 

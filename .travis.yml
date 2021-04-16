@@ -7,23 +7,21 @@ before_install:
 
 script:
   - docker run -e CI=true rgederin/fib-client-test npm test -- --coverage
-# after_success:
-#   # Build production docker images
-#   - docker build -t rgederin/fib-client ./client
-#   - docker build -t rgederin/fib-server ./server
-#   - docker build -t rgederin/fib-worker ./worker
-#   - docker build -t rgederin/fib-nginx ./nginx
+after_success:
+  # Build production docker images
+  - docker build -t rgederin/fib-client ./client
+  - docker build -t rgederin/fib-server ./server
+  - docker build -t rgederin/fib-worker ./worker
+  - docker build -t rgederin/fib-nginx ./nginx
 
-#   # Log in to the docker CLI
-#   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
 
-#   # Push images to Docker hub
-#   - docker push rgederin/fib-client
-#   - docker push rgederin/fib-server
-#   - docker push rgederin/fib-worker
-#   - docker push rgederin/fib-nginx
-#   # fib_application_db
-
+  # Push images to Docker hub
+  - docker push rgederin/fib-client
+  - docker push rgederin/fib-server
+  - docker push rgederin/fib-worker
+  - docker push rgederin/fib-nginx
 # deploy:
 #   provider: elasticbeanstalk
 #   region: "us-east-2"
