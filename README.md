@@ -194,7 +194,7 @@ And to verify that all containers are up and running you could execute `docker p
 
 ![docker-ps](https://github.com/rgederin/fibonacci-distributed-app/blob/master/img/docker-ps.png)
 
-## Continuous Integration Workflow for Multiple Images with Travis CI
+## Continuous Integration with Travis CI
 
 We will use Travis CI for organizing CI process and Docker Hub for storing docker images for our services. Below you could see whole CI/CD flow (deployment to AWS Elastic Beanstalk we will review in next section):
 
@@ -287,5 +287,70 @@ after_success:
 
 After this push your changes in github and check build in Travis CI:
 
+![travis-2](https://github.com/rgederin/fibonacci-distributed-app/blob/master/img/travis-2.png)
+
+And check Docker Hub (be sure that Travis deploys new images there)
+
+![docker-hub](https://github.com/rgederin/fibonacci-distributed-app/blob/master/img/docker-hub.png)
+
+## Deploy on AWS
+
+We will use AWS Elastic Beanstalk for deploying our multi container application. In order to describe for AWS EB our containers configuration we will use [Dockerrun.aws.json])https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/create_deploy_docker_v2config.html) file. It has similar purpose as `docker-compose.yml`:
 
 
+![run](https://github.com/rgederin/fibonacci-distributed-app/blob/master/img/run.png)
+
+So below you could find our `Dockerrun.aws.json` file:
+
+```
+{
+    "AWSEBDockerrunVersion": 2,
+    "containerDefinitions": [
+        {
+            "name": "client",
+            "image": "rgederin/fib-client",
+            "hostname": "client",
+            "essential": false,
+            "memory": 128
+        },
+        {
+            "name": "server",
+            "image": "rgederin/fib-server",
+            "hostname": "api",
+            "essential": false,
+            "memory": 128
+        },
+        {
+            "name": "worker",
+            "image": "rgederin/fib-worker",
+            "hostname": "worker",
+            "essential": false,
+            "memory": 128
+        },
+        {
+            "name": "nginx",
+            "image": "rgederin/fib-nginx",
+            "essential": true,
+            "portMappings": [
+                {
+                    "hostPort": 80,
+                    "containerPort": 80
+                }
+            ],
+            "links": [
+                "client",
+                "server"
+            ],
+            "memory": 128
+        }
+    ]
+}
+```
+
+As you could see there we did not mention Postrges and Redis because we will use AWS RDS and AWS Elastic Cache (managed services) respectively:
+
+![aws1](https://github.com/rgederin/fibonacci-distributed-app/blob/master/img/aws1.png)
+
+![aws2](https://github.com/rgederin/fibonacci-distributed-app/blob/master/img/aws2.png)
+
+![aws3](https://github.com/rgederin/fibonacci-distributed-app/blob/master/img/aws3.png)

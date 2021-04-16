@@ -7,6 +7,7 @@ before_install:
 
 script:
   - docker run -e CI=true rgederin/fib-client-test npm test -- --coverage
+
 after_success:
   # Build production docker images
   - docker build -t rgederin/fib-client ./client
