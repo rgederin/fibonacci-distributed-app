@@ -369,6 +369,9 @@ At this point we need to create require infrastructure on AWS, we could do this 
 6. Click Create Application
 7. You may need to refresh, but eventually, you should see a green checkmark underneath Health.
 
+![eb1](https://github.com/rgederin/fibonacci-distributed-app/blob/master/img/eb1.png)
+
+
 **RDS Database Creation**
 
 1. Go to AWS Management Console and use Find Services to search for RDS
@@ -384,6 +387,9 @@ At this point we need to create require infrastructure on AWS, we could do this 
 11. Set Initial database name
 12. Scroll down and click Create Database button
 
+![rds](https://github.com/rgederin/fibonacci-distributed-app/blob/master/img/rds.png)
+
+
 **ElastiCache Redis Creation**
 
 1. Go to AWS Management Console and use Find Services to search for ElastiCache
@@ -394,6 +400,9 @@ At this point we need to create require infrastructure on AWS, we could do this 
 6. Change Node type to 'cache.t2.micro'
 7. Change Replicas per Shard to 0
 8. Scroll down and click Create button
+
+![ec](https://github.com/rgederin/fibonacci-distributed-app/blob/master/img/ecs.png)
+
 
 **Creating a Custom Security Group**
 
@@ -409,6 +418,8 @@ At this point we need to create require infrastructure on AWS, we could do this 
 10. Click Add Rule
 11. Click in the box next to Source and start typing 'sg' into the box. Select the Security Group you just created.
 12. Click Create Security Group
+
+![sg](https://github.com/rgederin/fibonacci-distributed-app/blob/master/img/sg.png)
 
 When security group is created we need to apply it to RDS, EC and EB instances.
 
@@ -428,6 +439,9 @@ When security group is created we need to apply it to RDS, EC and EB instances.
 12. Set PGDATABASE to database name which you specified in RDS
 13. Set PGPORT to 5432
 14. Click Apply button
+
+![eb2](https://github.com/rgederin/fibonacci-distributed-app/blob/master/img/eb2.png)
+
 
 After all instances restart and go from No Data, to Severe, you should see a green checkmark under Health.
 

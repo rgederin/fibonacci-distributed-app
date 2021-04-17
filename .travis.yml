@@ -27,8 +27,8 @@ after_success:
 deploy:
   provider: elasticbeanstalk
   region: "us-east-2"
-  app: "fib-application-eb"
-  env: "Fibapplicationeb-env"
+  app: "fib-application"
+  env: "Fibapplication-env"
   bucket_name: "elasticbeanstalk-us-east-2-530260462866"
   bucket_path: "fib-app"
   on:
