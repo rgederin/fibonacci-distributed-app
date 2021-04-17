@@ -470,3 +470,6 @@ deploy:
 
 And push all our changes in GitHub. After this you need to check your build in Travis CI and then check you EB application.
 
+![eb3](https://github.com/rgederin/fibonacci-distributed-app/blob/master/img/eb2.png)
+
+![eb4](https://github.com/rgederin/fibonacci-distributed-app/blob/master/img/eb2.png)
