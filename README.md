@@ -401,7 +401,7 @@ At this point we need to create require infrastructure on AWS, we could do this 
 7. Change Replicas per Shard to 0
 8. Scroll down and click Create button
 
-![ec](https://github.com/rgederin/fibonacci-distributed-app/blob/master/img/ecs.png)
+![ec](https://github.com/rgederin/fibonacci-distributed-app/blob/master/img/ec.png)
 
 
 **Creating a Custom Security Group**
@@ -470,6 +470,6 @@ deploy:
 
 And push all our changes in GitHub. After this you need to check your build in Travis CI and then check you EB application.
 
-![eb3](https://github.com/rgederin/fibonacci-distributed-app/blob/master/img/eb2.png)
+![eb3](https://github.com/rgederin/fibonacci-distributed-app/blob/master/img/eb3.png)
 
-![eb4](https://github.com/rgederin/fibonacci-distributed-app/blob/master/img/eb2.png)
+![eb4](https://github.com/rgederin/fibonacci-distributed-app/blob/master/img/eb4.png)
